@@ -25,7 +25,7 @@ class ContactListViewController: UITableViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let newContactVC = segue.destination as! NewContactViewController
+        guard let newContactVC = segue.destination as? NewContactViewController else { return }
         newContactVC.delegate = self
     }
 

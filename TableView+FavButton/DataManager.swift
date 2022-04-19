@@ -30,4 +30,14 @@ class DataManager {
         return contacts
     }
     
+    func changeFavoriteStatus(at index: Int) {
+        var contacts = fetchContacts()
+        var contact = contacts.remove(at: index)
+        contact.favoriteStatus.toggle()
+        contacts.insert(contact, at: index)
+        
+        guard let data = try? JSONEncoder().encode(contacts) else { return }
+        userDefaults.set(data, forKey: contactKey)
+    }
+    
 }

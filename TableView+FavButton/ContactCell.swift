@@ -9,7 +9,7 @@ import UIKit
 
 class ContactCell: UITableViewCell {
     
-    var viewController: ContactListViewController?
+    var delegate: ContactCellDelegate!
 
     func configure(with contact: Contact) {
         var content = defaultContentConfiguration()
@@ -26,7 +26,7 @@ class ContactCell: UITableViewCell {
     }
     
     @objc  private func favoriteButtonPressed() {
-        viewController?.changeFavoriteStatus(for: self)
+        delegate.favoriteButtonTapped(for: self)
     }
 
 }

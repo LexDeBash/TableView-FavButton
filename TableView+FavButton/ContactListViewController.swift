@@ -11,11 +11,14 @@ protocol NewContactViewControllerDelegate {
     func saveContact(_ contact: Contact)
 }
 
+protocol ContactCellDelegate {
+    func favoriteButtonTapped(for cell: ContactCell)
+}
+
 class ContactListViewController: UITableViewController {
 
     private var  contacts: [Contact] = []
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         contacts = DataManager.shared.fetchContacts()
@@ -37,18 +40,22 @@ class ContactListViewController: UITableViewController {
         let contact = contacts[indexPath.row]
     
         cell.configure(with: contact)
-        cell.viewController = self
+        cell.delegate = self
         
         cell.accessoryView?.tintColor = contact.favoriteStatus ? .systemRed : .lightGray
         
         return cell
     }
     
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        changeFavoriteStatus(at: indexPath)
+    }
     
-    func changeFavoriteStatus(for cell: ContactCell) {
-        guard let selectedCell = tableView.indexPath(for: cell) else { return }
-        contacts[selectedCell.row].favoriteStatus.toggle()
-        tableView.reloadRows(at: [selectedCell], with: .automatic)
+    private func changeFavoriteStatus(at indexPath: IndexPath) {
+        contacts[indexPath.row].favoriteStatus.toggle()
+        tableView.reloadRows(at: [indexPath], with: .automatic)
     }
 }
 
@@ -57,5 +64,13 @@ extension ContactListViewController: NewContactViewControllerDelegate {
     func saveContact(_ contact: Contact) {
         contacts.append(contact)
         tableView.reloadData()
+    }
+}
+
+// MARK: - ContactCellDelegate
+extension ContactListViewController: ContactCellDelegate {
+    func favoriteButtonTapped(for cell: ContactCell) {
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        changeFavoriteStatus(at: indexPath)
     }
 }
